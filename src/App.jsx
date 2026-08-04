@@ -1,18 +1,24 @@
-import React from 'react'
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import HomePage from "./pages/Home";
 
 
 function App() {
   return (
-    <>
-     
-  <h1 className="text-4xl font-bold text-blue-600">
-      Welcome to My Website
-    </h1>
-   
-   
-      
-    </>
-  )
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route 
+          path="/" 
+          element={<HomePage />} 
+        />
+
+      </Routes>
+
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
