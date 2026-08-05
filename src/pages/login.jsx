@@ -1,224 +1,137 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+
     try {
-      const response = await axios.post("/api/login", { email, password });
-      console.log(response.data);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
+        {
+          email,
+          password,
+        }
+      );
+
+      localStorage.setItem("token", response.data.token);
+
+      toast.success("Login successful!");
+
+      if (response.data.user && response.data.user.role !== "admin") {
+        navigate("/products");
+      } else {
+        navigate("/admin");
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check your credentials.");
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#FFF5F4] via-white to-[#FFE5E0] flex items-center justify-center px-6 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#121212] px-4">
+      {/* Background Glow */}
+      <div className="absolute top-[-120px] left-[-120px] w-[350px] h-[350px] bg-[#8B1A24]/30 rounded-full blur-3xl"></div>
 
-
-      {/* Background Blur Effects */}
-
-      <div className="absolute top-20 left-10 w-72 h-72 bg-[#FF8A75]/30 rounded-full blur-3xl"></div>
-
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#8B1A24]/20 rounded-full blur-3xl"></div>
-
-
+      <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-[#FF8A75]/20 rounded-full blur-3xl"></div>
 
       {/* Login Card */}
-
-      <div className="relative z-10 w-full max-w-md 
-      bg-white/60 
-      backdrop-blur-xl
-      border border-white/40
-      rounded-3xl
-      shadow-2xl
-      p-8">
-
-
-        {/* Logo */}
-
-        <h1 className="text-center text-4xl font-bold text-[#8B1A24] mb-2">
-          LadyItem
-        </h1>
-
-
-        <p className="text-center text-gray-600 mb-8">
-          Welcome back! Login to your account
-        </p>
-
-
-
-        <form className="space-y-5">
-
-
-          {/* Email */}
-
-          <div>
-
-            <label className="text-sm font-medium text-[#121212]">
-              Email Address
-            </label>
-
-
-            <div className="relative mt-2">
-
-              <Mail 
-                className="absolute left-3 top-3 text-[#8B1A24]"
-                size={20}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 rounded-3xl shadow-2xl p-8">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-[#8B1A24] border-2 border-[#FF8A75] flex items-center justify-center shadow-lg">
+              <img
+                src="/logo.png"
+                alt="logo"
+                className="w-12 h-12 object-cover rounded-full"
               />
+            </div>
+          </div>
 
+          {/* Title */}
+          <h2 className="text-4xl font-bold text-center text-[#FF8A75]">
+            Welcome Back
+          </h2>
+
+          <p className="text-center text-gray-300 mt-2 mb-8">
+            Login to continue your shopping journey
+          </p>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-2 font-medium">
+                Email Address
+              </label>
 
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="
-                w-full
-                pl-11
-                py-3
-                rounded-xl
-                border
-                border-gray-200
-                outline-none
-                focus:ring-2
-                focus:ring-[#8B1A24]
-                "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-5 py-3 rounded-xl bg-[#1C1C1C] text-white placeholder-gray-500 border border-[#8B1A24] focus:outline-none focus:ring-2 focus:ring-[#FF8A75] focus:border-[#FF8A75] transition-all duration-300"
               />
-
             </div>
 
-          </div>
-
-
-
-
-          {/* Password */}
-
-          <div>
-
-            <label className="text-sm font-medium text-[#121212]">
-              Password
-            </label>
-
-
-            <div className="relative mt-2">
-
-
-              <Lock
-                className="absolute left-3 top-3 text-[#8B1A24]"
-                size={20}
-              />
-
+            {/* Password */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-2 font-medium">
+                Password
+              </label>
 
               <input
                 type="password"
-                placeholder="Enter your password" className=" w-full pl-11 py-3 rounded-xl border border-gray-200 outline-none
-                focus:ring-2
-                focus:ring-[#8B1A24]
-                "
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-5 py-3 rounded-xl bg-[#1C1C1C] text-white placeholder-gray-500 border border-[#8B1A24] focus:outline-none focus:ring-2 focus:ring-[#FF8A75] focus:border-[#FF8A75] transition-all duration-300"
               />
-
             </div>
 
+            {/* Forgot Password */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-sm text-[#FF8A75] hover:text-white hover:underline transition"
+              >
+                Forgot Password?
+              </button>
+            </div>
 
-          </div>
-
-
-
-          {/* Remember + Forgot */}
-
-          <div className="flex justify-between items-center text-sm">
-
-
-            <label className="flex items-center gap-2">
-
-              <input 
-                type="checkbox"
-                className="accent-[#8B1A24]"
-              />
-
-              Remember me
-
-            </label>
-
-
-
-            <Link
-              to="/forgot-password"
-              className="text-[#8B1A24] hover:underline"
+            {/* Login Button */}
+            <button
+              type="submit"
+              className="w-full bg-[#8B1A24] hover:bg-[#A61F2C] text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-[#8B1A24]/40 transition-all duration-300 hover:scale-[1.02]"
             >
-              Forgot Password?
-            </Link>
+              Login
+            </button>
 
-
-          </div>
-
-
-
-
-
-          {/* Login Button */}
-
-          <button
-            type="submit"
-            className="
-            w-full
-            py-3
-            rounded-xl
-            bg-[#8B1A24]
-            text-white
-            font-semibold
-            hover:bg-[#FF8A75]
-            transition
-            duration-300
-            shadow-lg
-            "
-          >
-
-            Login
-
-          </button>
-
-
-
-        </form>
-
-
-
-
-
-        {/* Signup */}
-
-        <p className="text-center text-gray-600 mt-6">
-
-          Don't have an account?
-
-          <Link
-            to="/signup"
-            className="
-            ml-2
-            text-[#8B1A24]
-            font-semibold
-            hover:underline
-            "
-          >
-
-            Create Account
-
-          </Link>
-
-
-        </p>
-
-
-
+            {/* Sign Up */}
+            <p className="text-center text-gray-300 text-sm">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-[#FF8A75] font-semibold hover:text-white hover:underline transition"
+              >
+                Sign Up
+              </Link>
+            </p>
+          </form>
+        </div>
       </div>
-
-
     </div>
   );
-}
+};
+
+export default Login;
