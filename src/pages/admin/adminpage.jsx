@@ -1,5 +1,7 @@
-
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import AdminProductPage from "./AdminProductPage";
+import { Link } from "react-router-dom";
 
 export default function AdminPage() {
   return (
