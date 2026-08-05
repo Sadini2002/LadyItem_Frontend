@@ -1,39 +1,22 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./component/header";
-import HomePage from "./pages/Home";
+import Header from "./component/Header";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import AdminPage from "./pages/admin/adminpage";
-
-
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
     <BrowserRouter>
-    <div>
-      <Header/>
-
+      <Header />
       <Routes>
-
-        <Route path="/*"  element={<HomePage />} />
-        <Route path="/"element={<HomePage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/admin/*" element={<AdminPage/>} />
-        <Route path="/*" element={<h1>404 Not Founded</h1>} />
-        <Route path='/userdata' element={<UserData/>}/>
-     <Route path='/homePage' element={<Home/>}/>
-     <Route path='/products' element={<ProductPage/>}/>
-     <Route path='/contact' element={<h1>Contact</h1>}/>
-     <Route path='/about' element={<h1>About</h1>}/>
-     <Route path='/profile' element={<h1>Wishlist</h1>}/>
-     <Route path='/cart' element={<CartPage />} />
-     <Route path='/overview/:id' element={<ProductOverview/>}/>
-      </Routes>
-      </div>
 
+        <Route path="/*" element={<h1 className="text-2xl font-bold ">404 not found</h1>} />
+      </Routes>
     </BrowserRouter>
   );
 }
