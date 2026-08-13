@@ -12,7 +12,7 @@ export default function AdminPage() {
       
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-lg rounded-r-2xl p-6 flex flex-col gap-6">
-        <h2 className="text-2xl font-semibold mb-4">Admin Panel</h2>
+        <h2 className="text-2xl font-semibold mb-4 mt-[100px]">Admin Panel</h2>
         <Link
           to="/admin/products"
           className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -43,7 +43,7 @@ export default function AdminPage() {
       {/* Main Content */}
       <main className="flex-1 p-10 overflow-auto">
         
-        <div className="bg-white rounded-3xl shadow-xl p-8 ">
+        <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px] ">
           <h1 className="text-2xl font-bold mb-4">Welcome to the Admin Panel</h1>
           
           {/*<Routes>
