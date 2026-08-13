@@ -22,14 +22,16 @@ const Login = () => {
 
         }
       );
-      alert("Login successful!");
       
-      localStorage.setItem("token", response.data.token);
-
+      console.log("Login successful:", response.data);
       toast.success("Login successful!");
 
+      localStorage.setItem("token", response.data.token);
+      
+        // Reload the page to update the state
+    
       if (response.data.user && response.data.user.role !== "admin") {
-        navigate("/products");
+          navigate("/"); // Redirect to home page for non-admin users
       } else {
         navigate("/admin");
       }

@@ -46,18 +46,18 @@ export default function AdminPage() {
         <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px] ">
           <h1 className="text-2xl font-bold mb-4">Welcome to the Admin Panel</h1>
           
-          {/*<Routes>
+          {<Routes>
             <Route path="/products" element={<AdminProductPage />} />
-            <Route path="/user" element={<AdminUserPage />} />
+            <Route path="/user" element={<h1>user</h1>} />
             <Route path="/order" element={<h1 className="text-xl">Orders</h1>} />
             <Route path="/reviews" element={<h1 className="text-xl">Reviews</h1>} />
-            <Route path="/addProduct" element={<AddproductPage />} />
+            <Route path="/addProduct" element={<h1>addprodut</h1>} />
             <Route
               path="/edit-product"
-              element={<AdminProductEditPage />}
+              element={<h1>editproduct</h1>}
             />
-            <Route path="/addUser" element={<AddUserPage></AddUserPage>} />
-          </Routes>*/}
+            <Route path="/addUser" element={<h1>add user</h1>} />
+          </Routes>}
         </div>
       </main>
     </div>

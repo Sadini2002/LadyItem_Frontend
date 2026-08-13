@@ -87,7 +87,7 @@ export default function AdminProductPage() {
 
           {/* Desktop Table */}
 
-          <div className="relative z-10 hidden md:block overflow-x-auto rounded-3xl shadow-xl bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 p-6">
+          <div className="relative z-10 hidden md:block overflow-x-auto rounded-3xl shadow-xl bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 p-6 overflow-y-scroll">
 
 
             <table className="w-full text-center border-collapse min-w-[700px]">
