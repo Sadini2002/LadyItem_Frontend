@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import AdminPage from "./AdminPage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
+    
     e.preventDefault();
 
     try {
@@ -17,20 +19,25 @@ const Login = () => {
         {
           email,
           password,
+
         }
       );
-
-      localStorage.setItem("token", response.data.token);
-
+      
+      console.log("Login successful:", response.data);
       toast.success("Login successful!");
 
+      localStorage.setItem("token", response.data.token);
+      
+        // Reload the page to update the state
+    
       if (response.data.user && response.data.user.role !== "admin") {
-        navigate("/products");
+          navigate("/"); // Redirect to home page for non-admin users
       } else {
         navigate("/admin");
       }
+
     } catch (error) {
-      console.error("Login error:", error);
+      console.log ("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
   }
@@ -43,7 +50,7 @@ const Login = () => {
       <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-[#FF8A75]/20 rounded-full blur-3xl"></div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md ">
         <div className="bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 rounded-3xl shadow-2xl p-8">
           {/* Logo */}
           <div className="flex justify-center mb-6">

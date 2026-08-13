@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import Header from "../component/header";
-import ProductPage from "../client/ProductPage";
 import HomePage from "./HomePage";
 import ProductOverview from "../client/productOverview";
 import CartPage from "../client/cart";
-
+import AdminProductPage from "./admin/AdminProductPage";
+S
 export default function Home() {
   return (
     <div className="w-full h-screen flex flex-col items-center">
@@ -14,7 +14,7 @@ export default function Home() {
          <Header></Header> 
         <Routes path="/*">
           <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<ProductPage />} />
+          <Route path="/products" element={<AdminProductPage />} />
           <Route path="/about" element={<h1>About</h1>} />
           <Route path="/contact" element={<h1>Contact</h1>} />
           <Route path="/profile" element={<h1>Wishlist</h1>} />
