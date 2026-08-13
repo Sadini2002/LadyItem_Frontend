@@ -5,7 +5,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AdminPage from "./pages/AdminPage";
 import { Toaster } from "react-hot-toast";
-import adminProductPage from "./pages/admin/AdminProductPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage/>} />
+        
         
 
         <Route path="/*" element={<h1 className="text-2xl font-bold ">404 not found</h1>} />
