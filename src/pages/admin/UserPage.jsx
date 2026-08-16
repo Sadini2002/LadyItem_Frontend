@@ -113,10 +113,9 @@ export default function AdminUserPage() {
 
               <tr className="bg-[#8B1A24] text-white">
 
+              <th className="p-3">No.</th>
 
-                <th className="p-3 rounded-tl-xl">
-                  User ID
-                </th>
+                
 
 
                 <th className="p-3">
@@ -150,17 +149,18 @@ export default function AdminUserPage() {
 
               {users.length > 0 ? (
 
-                users.map((user)=>(
+                users.map((user, index)=>(
 
                   <tr
                     key={user._id}
                     className="text-gray-200 hover:bg-white/10 transition"
                   >
-
-
                     <td className="p-3 border-b border-gray-700">
-                      {user._id}
-                    </td>
+                    {index + 1}
+                      </td>
+
+
+                    
 
 
                     <td className="p-3 border-b border-gray-700">
