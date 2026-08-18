@@ -199,7 +199,7 @@ export default function AdminProductPage() {
                             className="cursor-pointer text-[#FF8A75] hover:text-white"
                             onClick={() =>
                               navigate(
-                                "/admin/edit-product",
+                                `/admin/edit-product/${item._id}`,
                                 {
                                   state:item
                                 }
