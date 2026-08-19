@@ -89,7 +89,6 @@ export default function AdminProductPage() {
 
           <div className="relative z-10 hidden md:block overflow-x-auto rounded-3xl shadow-xl bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 p-6 overflow-y-scroll">
 
-
             <table className="w-full text-center border-collapse min-w-[700px]">
 
 
@@ -198,11 +197,8 @@ export default function AdminProductPage() {
                           <CiEdit
                             className="cursor-pointer text-[#FF8A75] hover:text-white"
                             onClick={() =>
-                              navigate(
-                                `/edit-product/${item._id}`,
-                                {
-                                  state:item
-                                }
+                              navigate("/admin/edit-product", {  
+                                state: item }
                               )
                             }
                           />
