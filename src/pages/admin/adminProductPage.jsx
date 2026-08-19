@@ -197,7 +197,7 @@ export default function AdminProductPage() {
                           <CiEdit
                             className="cursor-pointer text-[#FF8A75] hover:text-white"
                             onClick={() =>
-                              navigate("/admin/edit-product", {  
+                              navigate(`/admin/edit-product/${item._id}`, {  
                                 state: item }
                               )
                             }

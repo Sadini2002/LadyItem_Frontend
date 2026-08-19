@@ -6,8 +6,9 @@ import AddProductPage from "./admin/AddproductPage";
 import UserPage from "./admin/UserPage";
 import AddUserPage from "./admin/AddUserPage";
 import EditUserPage from "./admin/EditUserPage";
-
 import EditProductPage from "./admin/EditProductPage";
+
+
 
 export default function AdminPage() {
   return (
@@ -63,7 +64,7 @@ export default function AdminPage() {
               element={<EditUserPage/>}
             />
             <Route path="/addUser" element={<AddUserPage />} />
-            <Route path="/edit-product" element={<h1>fffffffffff</h1>} />
+            <Route path="/edit-product" element={<EditProductPage />} />
           </Routes>}
         </div>
       </main>
