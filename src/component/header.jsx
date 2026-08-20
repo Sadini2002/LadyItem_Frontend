@@ -11,6 +11,7 @@ import {
   LogOut,
   ShieldAlert,
 } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +19,8 @@ const Header = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const navigate = useNavigate();
   const location = useLocation();
+  const { cartCount } = useCart();
+
 
   // Listen for storage / location changes to update login status
   useEffect(() => {
@@ -47,6 +50,7 @@ const Header = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Products", path: "/products" },
+    { name: "Cart", path: "/cart" },
     ...(token && role === "admin"
       ? [{ name: "Admin Panel", path: "/admin" }]
       : []),
@@ -90,12 +94,14 @@ const Header = () => {
             <Heart size={20} />
           </button>
 
-          <button className="relative hover:text-[#8B1A24] transition">
+          <Link to="/cart" className="relative hover:text-[#8B1A24] transition">
             <ShoppingBag size={20} />
-            <span className="absolute -top-2 -right-2 bg-[#FF8A75] text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-              2
-            </span>
-          </button>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#FF8A75] text-white rounded-full text-xs font-bold w-5 h-5 flex items-center justify-center animate-pulse">
+                {cartCount}
+              </span>
+            )}
+          </Link>
 
           {token ? (
             <button
