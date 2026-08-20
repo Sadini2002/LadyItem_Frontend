@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Search, ShoppingBag, Heart, Eye, Sparkles } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 const DEFAULT_PLACEHOLDER =
   "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231F2937%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20fill%3D%22%239CA3AF%22%20font-family%3D%22sans-serif%22%20font-size%3D%2220%22%3ENo%20Image%20Available%3C%2Ftext%3E%3C%2Fsvg%3E";
 
 export default function ProductPage() {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -104,10 +108,13 @@ export default function ProductPage() {
               const hasDiscount =
                 product.labalPrice && Number(product.labalPrice) > Number(product.price);
 
+              const pId = product.productId || product._id;
+
               return (
                 <div
-                  key={product._id || product.productId}
-                  className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-[#FF8A75]/20 hover:border-[#FF8A75]/60 p-4 transition duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg hover:shadow-[#8B1A24]/20"
+                  key={pId}
+                  className="group relative bg-white/5 backdrop-blur-xl rounded-3xl border border-[#FF8A75]/20 hover:border-[#FF8A75]/60 p-4 transition duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg hover:shadow-[#8B1A24]/20 cursor-pointer"
+                  onClick={() => navigate(`/products/${pId}`)}
                 >
                   {/* Image Container */}
                   <div className="relative w-full h-56 rounded-2xl overflow-hidden bg-gray-900 border border-white/10 mb-4">
@@ -140,14 +147,20 @@ export default function ProductPage() {
                     {/* Hover Actions */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
                       <button
-                        onClick={() => setSelectedImageModal(imageSrc)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedImageModal(imageSrc);
+                        }}
                         className="p-3 bg-white/20 hover:bg-[#8B1A24] text-white rounded-full transition transform hover:scale-110"
                         title="Quick View"
                       >
                         <Eye size={18} />
                       </button>
                       <button
-                        onClick={() => toast.success(`Added ${product.name} to wishlist`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toast.success(`Added ${product.name} to wishlist`);
+                        }}
                         className="p-3 bg-white/20 hover:bg-[#FF8A75] text-white rounded-full transition transform hover:scale-110"
                         title="Wishlist"
                       >
@@ -187,7 +200,10 @@ export default function ProductPage() {
 
                       {/* Add to Cart Button */}
                       <button
-                        onClick={() => toast.success(`Added ${product.name} to cart`)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product);
+                        }}
                         disabled={product.stock <= 0}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8B1A24] text-white hover:bg-[#A61F2C] disabled:bg-gray-700 disabled:cursor-not-allowed transition text-sm font-medium shadow-md"
                       >

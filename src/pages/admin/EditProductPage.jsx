@@ -203,6 +203,7 @@ export default function EditProductPage() {
           {/* Product ID */}
           <Input
             label="Product ID"
+            disabled
             value={productId}
             onChange={setProductId}
             placeholder="Enter product ID"
