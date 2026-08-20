@@ -53,10 +53,16 @@ useEffect(() => {
 
       const user = response.data.user || response.data;
 
+      if (user.role !== "admin") {
+        toast.error("User and customer accounts cannot be edited");
+        navigate("/admin/user");
+        return;
+      }
+
       setFirstname(user.firstname || "");
       setLastname(user.lastname || "");
       setEmail(user.email || "");
-      setRole(user.role || "user");
+      setRole(user.role || "admin");
       setIsBlock(Boolean(user.isBlock));
       setImg(user.img || "");
 

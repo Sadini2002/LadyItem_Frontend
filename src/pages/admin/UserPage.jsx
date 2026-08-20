@@ -192,12 +192,23 @@ export default function AdminUserPage() {
                         />
 
 
-                        <CiEdit
-                          className="cursor-pointer text-[#FF8A75] hover:text-white transition"
-                          onClick={() =>
-                            navigate(`/admin/edit-user/${user._id}`)
-                          }
-                        />
+                        {user.role === "admin" ? (
+                          <CiEdit
+                            className="cursor-pointer text-[#FF8A75] hover:text-white transition"
+                            title="Edit Admin Account"
+                            onClick={() =>
+                              navigate(`/admin/edit-user/${user._id}`)
+                            }
+                          />
+                        ) : (
+                          <CiEdit
+                            className="cursor-not-allowed opacity-30 text-gray-500"
+                            title="User and customer accounts cannot be edited"
+                            onClick={() =>
+                              toast.error("User and customer accounts cannot be edited")
+                            }
+                          />
+                        )}
 
 
                       </div>
