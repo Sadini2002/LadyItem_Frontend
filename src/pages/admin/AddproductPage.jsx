@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,6 +18,40 @@ export default function AddProductPage() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchNextProductId() {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, "")}/api/products`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const products = res.data || [];
+
+        let maxNum = 0;
+        products.forEach((p) => {
+          if (p.productId) {
+            const match = p.productId.match(/\d+/);
+            if (match) {
+              const num = parseInt(match[0], 10);
+              if (num > maxNum) maxNum = num;
+            }
+          }
+        });
+
+        const nextNum = maxNum + 1;
+        const autoId = `P${String(nextNum).padStart(3, "0")}`;
+        setProductId(autoId);
+      } catch (err) {
+        console.error("Failed to auto-generate product ID:", err);
+      }
+    }
+
+    fetchNextProductId();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
