@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
-    
+
     e.preventDefault();
 
     try {
@@ -22,22 +22,22 @@ const Login = () => {
 
         }
       );
-      
+
       console.log("Login successful:", response.data);
       toast.success("Login successful!");
 
+      const role = response.data.role || "user";
       localStorage.setItem("token", response.data.token);
-      
-        // Reload the page to update the state
-    
-      if (response.data.user && response.data.user.role !== "admin") {
-          navigate("/"); // Redirect to home page for non-admin users
-      } else {
+      localStorage.setItem("role", role);
+
+      if (role === "admin") {
         navigate("/admin");
+      } else {
+        navigate("/products");
       }
 
     } catch (error) {
-      console.log ("Login error:", error);
+      console.log("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
   }

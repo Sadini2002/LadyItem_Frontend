@@ -1,23 +1,52 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import AdminProductPage from "./admin/AdminProductPage";
-import { Link } from "react-router-dom";
 import AddProductPage from "./admin/AddproductPage";
 import UserPage from "./admin/UserPage";
 import AddUserPage from "./admin/AddUserPage";
 import EditUserPage from "./admin/EditUserPage";
 import EditProductPage from "./admin/EditProductPage";
-;
-
-
 
 export default function AdminPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    let userRole = localStorage.getItem("role");
+
+    if (token && !userRole) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        userRole = payload.role;
+      } catch (e) {
+        console.error("Failed to parse token:", e);
+      }
+    }
+
+    if (!token || userRole !== "admin") {
+      toast.error("Access Denied: Admin privileges required");
+      navigate("/products");
+    }
+  }, [navigate]);
+
+  const token = localStorage.getItem("token");
+  let userRole = localStorage.getItem("role");
+  if (token && !userRole) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      userRole = payload.role;
+    } catch (e) {}
+  }
+
+  // Prevent rendering admin panel if not an admin
+  if (!token || userRole !== "admin") {
+    return null;
+  }
+
   return (
     <div>
-
-
       <div className="flex h-screen bg-gray-50 font-sans">
-
         {/* Sidebar */}
         <aside className="w-64 bg-white shadow-lg rounded-r-2xl p-6 flex flex-col gap-6">
           <h2 className="text-2xl font-semibold mb-4 mt-[100px]">Admin Panel</h2>
@@ -45,29 +74,24 @@ export default function AdminPage() {
           >
             Reviews
           </Link>
-
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 p-10 overflow-auto">
-
-          <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px] ">
+          <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px]">
             <h1 className="text-2xl font-bold mb-4">Welcome to the Admin Panel</h1>
 
-            {<Routes>
+            <Routes>
               <Route path="/products" element={<AdminProductPage />} />
               <Route path="/user" element={<UserPage />} />
               <Route path="/order" element={<h1 className="text-xl">Orders</h1>} />
               <Route path="/reviews" element={<h1 className="text-xl">Reviews</h1>} />
               <Route path="/addProduct" element={<AddProductPage />} />
-              <Route
-                path="/edit-user/:id"
-                element={<EditUserPage />}
-              />
+              <Route path="/edit-user/:id" element={<EditUserPage />} />
               <Route path="/addUser" element={<AddUserPage />} />
               <Route path="/edit-product" element={<EditProductPage />} />
               <Route path="/edit-product/:productId" element={<EditProductPage />} />
-            </Routes>}
+            </Routes>
           </div>
         </main>
       </div>
