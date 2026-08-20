@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import mediaUpload from "../../utils/mediaUpload";
 
 export default function EditProductPage() {
-  const [productId, setProductId] = useState("");
-  const [name, setName] = useState("");
-  const [altName, setAltName] = useState([]);
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState([]);
-  const [labelPrice, setLabelPrice] = useState("");
-  const [stock, setStock] = useState("");
+
+    const location = useLocation();
+  const [productId, setProductId] = useState(location.state?.productId || "");
+  const [name, setName] = useState(location.state?.name || "");
+  const [altName, setAltName] = useState(location.state?.altName || []);
+  const [price, setPrice] = useState(location.state?.price || "");
+  const [description, setDescription] = useState(location.state?.description || "");
+  const [image, setImage] = useState(location.state?.image || []);
+  const [labelPrice, setLabelPrice] = useState(location.state?.labelPrice || "");
+  const [stock, setStock] = useState(location.state?.stock || "");
   const [isAvailable, setIsAvailable] = useState(true);
 
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
+  
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -28,139 +29,11 @@ export default function EditProductPage() {
       toast.error("Admin not logged in");
       return;
     }
-
-    if (!productId.trim()) {
-      toast.error("Product ID is required");
-      return;
-    }
-
-    if (!name.trim()) {
-      toast.error("Product name is required");
-      return;
-    }
-
-    if (price === "" || Number(price) < 0) {
-      toast.error("Please enter a valid price");
-      return;
-    }
-
-    if (labelPrice === "" || Number(labelPrice) < 0) {
-      toast.error("Please enter a valid label price");
-      return;
-    }
-
-    if (stock === "" || Number(stock) < 0) {
-      toast.error("Please enter a valid stock");
-      return;
-    }
-
-    if (image.length === 0) {
-      toast.error("Please upload at least one image");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      // -----------------------------------
-      // 1. Upload images to Supabase
-      // -----------------------------------
-
-      console.log("Uploading images...");
-
-      const imageUrls = await Promise.all(
-        image.map((file) => mediaUpload(file))
-      );
-
-      console.log("Uploaded image URLs:", imageUrls);
-
-      // -----------------------------------
-      // 2. Prepare data according to backend
-      // -----------------------------------
-
-      const productData = {
-        productId: productId.trim(),
-
-        name: name.trim(),
-
-        altName: altName,
-
-        price: Number(price),
-
-        description: description.trim(),
-
-        image: imageUrls,
-
-        // IMPORTANT:
-        // Your backend model uses "labalPrice"
-        labalPrice: Number(labelPrice),
-
-        stock: Number(stock),
-
-        isAvailable: isAvailable,
-      };
-
-      console.log("Product data:", productData);
-
-      // -----------------------------------
-      // 3. Send product to backend
-      // -----------------------------------
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/products`,
-        productData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Product response:", response.data);
-
-      toast.success("Product added successfully");
-
-      // -----------------------------------
-      // 4. Navigate
-      // -----------------------------------
-
-      navigate("/admin/products");
-
-    } catch (error) {
-      console.error("========== ADD PRODUCT ERROR ==========");
-
-      console.error("Error:", error);
-
-      console.error(
-        "Status:",
-        error?.response?.status
-      );
-
-      console.error(
-        "Response:",
-        error?.response?.data
-      );
-
-      console.error(
-        "Backend error:",
-        error?.response?.data?.error
-      );
-
-      console.error("======================================");
-
-      const message =
-        error?.response?.data?.error?.message ||
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to add product";
-
-      toast.error(message);
-
-    } finally {
-      setLoading(false);
-    }
   }
+
+  const navigate = useNavigate();
+
+ 
 
   return (
     <div className="min-h-screen bg-[#121212] flex items-center justify-center px-4 py-10 relative overflow-hidden">
