@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Header from "./component/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -7,6 +7,7 @@ import AdminPage from "./pages/AdminPage";
 import { Toaster } from "react-hot-toast";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ProductPage from "./pages/ProductPage";
 import Testing from "./pages/Testing";
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/products" element={<ProductPage />} />
+        <Route path="/categories" element={<Navigate to="/products" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin/*" element={<AdminPage />} />
