@@ -66,6 +66,7 @@ export default function AdminPage() {
               />
               <Route path="/addUser" element={<AddUserPage />} />
               <Route path="/edit-product" element={<EditProductPage />} />
+              <Route path="/edit-product/:productId" element={<EditProductPage />} />
             </Routes>}
           </div>
         </main>
