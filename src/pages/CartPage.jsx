@@ -50,14 +50,9 @@ export default function CartPage() {
   };
 
   const handleCheckout = () => {
-    setIsCheckingOut(true);
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      toast.success("Order placed successfully! Thank you for shopping with LadyItem.");
-      clearCart();
-      navigate("/products");
-    }, 1500);
+    navigate("/checkout");
   };
+
 
   return (
     <div className="min-h-screen w-full bg-[#121212] pt-28 pb-16 px-4 md:px-10 text-white relative overflow-hidden">
