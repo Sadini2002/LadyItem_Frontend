@@ -46,7 +46,7 @@ const Signup = () => {
 
       toast.success("Account created successfully!");
 
-      navigate("/home");
+      navigate("/products");
     } catch (error) {
       console.error("Signup error:", error);
 
