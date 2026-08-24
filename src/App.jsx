@@ -15,6 +15,7 @@ import PaymentPage from "./pages/PaymentPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import Testing from "./pages/Testing";
 import { CartProvider } from "./context/CartContext";
+import MyOrdersPage from "./pages/MyOrdersPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/testing" element={<Testing />} />
+            <Route path="/myorders" element={<MyOrdersPage/>} />
 
             <Route path="/*" element={<h1 className="text-2xl font-bold p-10 text-white">404 not found</h1>} />
           </Routes>
