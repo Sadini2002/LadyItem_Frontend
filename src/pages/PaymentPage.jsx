@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   ArrowLeft,
   ArrowRight,
@@ -120,7 +121,7 @@ export default function PaymentPage() {
     return errs;
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (method === "card") {
       const errs = validateCard();
       if (Object.keys(errs).length > 0) {
@@ -133,34 +134,81 @@ export default function PaymentPage() {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to place an order");
+      navigate("/login");
+      return;
+    }
+
     setPlacing(true);
 
-    // Generate order ID and save snapshot
-    const orderId = "LI-" + new Date().getFullYear() + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
-    const deliveryDate = new Date();
-    deliveryDate.setDate(deliveryDate.getDate() + 5);
+    try {
+      const baseUrl = (import.meta.env.VITE_BACKEND_URL || "http://localhost:3000").replace(/\/+$/, "");
 
-    const orderSnapshot = {
-      orderId,
-      deliveryDate: deliveryDate.toDateString(),
-      method,
-      items: cart,
-      subtotal,
-      discountCode,
-      discountAmount,
-      shippingFee,
-      grandTotal,
-      address: checkoutData,
-      placedAt: new Date().toISOString(),
-    };
+      const calculatedPaymentStatus = method === "cod" ? "Unpaid" : "Paid";
 
-    sessionStorage.setItem("last_order", JSON.stringify(orderSnapshot));
+      const orderPayload = {
+        name: `${checkoutData.firstName || ""} ${checkoutData.lastName || ""}`.trim(),
+        email: checkoutData.email || "",
+        phone: checkoutData.phone || "",
+        address: checkoutData.address || "",
+        city: checkoutData.city || "",
+        postalCode: checkoutData.postalCode || "",
+        paymentMethod: method,
+        paymentStatus: calculatedPaymentStatus,
+        grandTotal: grandTotal,
+        products: cart.map((item) => ({
+          productId: item.productId || item._id,
+          quantity: item.quantity || 1,
+          name: item.name,
+          price: item.price,
+          image: item.image,
+        })),
+      };
 
-    setTimeout(() => {
+      const res = await axios.post(`${baseUrl}/orders/create`, orderPayload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const deliveryDate = new Date();
+      deliveryDate.setDate(deliveryDate.getDate() + 5);
+
+      const returnedOrderId = res.data.orderId || res.data.order?.orderId || ("LI-" + Math.random().toString(36).slice(2, 7).toUpperCase());
+
+      const orderSnapshot = {
+        orderId: returnedOrderId,
+        deliveryDate: deliveryDate.toDateString(),
+        method: method,
+        paymentStatus: calculatedPaymentStatus,
+        items: cart,
+        subtotal,
+        discountCode,
+        discountAmount,
+        shippingFee,
+        grandTotal,
+        address: checkoutData,
+        placedAt: new Date().toISOString(),
+      };
+
+      sessionStorage.setItem("last_order", JSON.stringify(orderSnapshot));
+
+      toast.success("Order placed successfully!");
       clearCart();
       sessionStorage.removeItem("checkout_data");
       navigate("/order-confirmation");
-    }, 2000);
+
+    } catch (error) {
+      console.error("Order creation failed:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to create order. Please try again."
+      );
+    } finally {
+      setPlacing(false);
+    }
   };
 
   const inputCls = (field) =>

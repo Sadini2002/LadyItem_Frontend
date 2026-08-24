@@ -7,6 +7,7 @@ import UserPage from "./admin/UserPage";
 import AddUserPage from "./admin/AddUserPage";
 import EditUserPage from "./admin/EditUserPage";
 import EditProductPage from "./admin/EditProductPage";
+import AdminOrdersPage from "./admin/AdminOrdersPage";
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -79,12 +80,11 @@ export default function AdminPage() {
         {/* Main Content */}
         <main className="flex-1 p-10 overflow-auto">
           <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px]">
-            <h1 className="text-2xl font-bold mb-4">Welcome to the Admin Panel</h1>
-
             <Routes>
               <Route path="/products" element={<AdminProductPage />} />
               <Route path="/user" element={<UserPage />} />
-              <Route path="/order" element={<h1 className="text-xl">Orders</h1>} />
+              <Route path="/order" element={<AdminOrdersPage />} />
+              <Route path="/orders" element={<AdminOrdersPage />} />
               <Route path="/reviews" element={<h1 className="text-xl">Reviews</h1>} />
               <Route path="/addProduct" element={<AddProductPage />} />
               <Route path="/edit-user/:id" element={<EditUserPage />} />
