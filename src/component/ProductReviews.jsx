@@ -36,8 +36,7 @@ export default function ProductReviews({ productId, productName }) {
     try {
       setLoading(true);
       const baseUrl = (
-        import.meta.env.VITE_BACKEND_URL || "http://localhost:3000"
-      ).replace(/\/+$/, "");
+        import.meta.env.VITE_BACKEND_URL  ).replace(/\/+$/, "");
 
       let fetchedData = [];
       try {
@@ -61,48 +60,7 @@ export default function ProductReviews({ productId, productName }) {
     }
   };
 
-  const getFallbackReviews = (pid, pName) => [
-    {
-      _id: "rev-101",
-      productId: pid,
-      reviewerName: "Amaya Perera",
-      reviewerEmail: "amaya@example.com",
-      rating: 5,
-      title: "Absolutely stunning quality!",
-      comment: `I ordered this ${pName || "item"} last week and I am completely impressed! The craftsmanship and detail are top tier. Will definitely order again!`,
-      status: "Approved",
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 12,
-      adminReply: "Thank you so much Amaya! We are thrilled you love your purchase!",
-    },
-    {
-      _id: "rev-102",
-      productId: pid,
-      reviewerName: "Nipuni Silva",
-      reviewerEmail: "nipuni@example.com",
-      rating: 4,
-      title: "Great value for money",
-      comment: "Very elegant design. Delivery was fast and the item arrived safely packed. Slightly darker shade than photo but still looks beautiful.",
-      status: "Approved",
-      date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 5,
-    },
-    {
-      _id: "rev-103",
-      productId: pid,
-      reviewerName: "Dilani Fernando",
-      reviewerEmail: "dilani@example.com",
-      rating: 5,
-      title: "Exceeded my expectations",
-      comment: "Super comfortable and sleek! Fits perfectly and matches all my outfits. Highly recommended for everyone.",
-      status: "Approved",
-      date: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: false,
-      likes: 8,
-    },
-  ];
+ 
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();

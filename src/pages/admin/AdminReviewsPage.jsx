@@ -2,20 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {
-  Star,
-  Search,
-  Filter,
-  Eye,
-  CheckCircle2,
-  XCircle,
-  Trash2,
-  MessageSquare,
-  Sparkles,
-  Send,
-  AlertCircle,
-  ThumbsUp,
-  User,
-  ShieldCheck,
+  Star,Search,Filter,Eye,CheckCircle2,XCircle,Trash2,MessageSquare,Sparkles,
+  Send,AlertCircle,ThumbsUp,User,ShieldCheck,
 } from "lucide-react";
 
 export default function AdminReviewsPage() {
@@ -64,79 +52,7 @@ export default function AdminReviewsPage() {
     }
   };
 
-  const getInitialAdminReviews = () => [
-    {
-      _id: "rev-001",
-      productId: "PRD-101",
-      productName: "Silk Designer Saree",
-      reviewerName: "Amaya Perera",
-      reviewerEmail: "amaya@example.com",
-      rating: 5,
-      title: "Absolutely stunning quality!",
-      comment: "I ordered this saree last week and I am completely impressed! The craftsmanship and detail are top tier. Will definitely order again!",
-      status: "Approved",
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 12,
-      adminReply: "Thank you Amaya! We are thrilled you love your purchase!",
-    },
-    {
-      _id: "rev-002",
-      productId: "PRD-102",
-      productName: "Handcrafted Silver Necklace",
-      reviewerName: "Kavindi Jayasinghe",
-      reviewerEmail: "kavindi@example.com",
-      rating: 5,
-      title: "Gorgeous piece!",
-      comment: "Looks even better in person. Shipped within 2 days and came with beautiful gift packaging.",
-      status: "Approved",
-      date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 9,
-    },
-    {
-      _id: "rev-003",
-      productId: "PRD-103",
-      productName: "Floral Embroidered Kurti",
-      reviewerName: "Nipuni Silva",
-      reviewerEmail: "nipuni@example.com",
-      rating: 4,
-      title: "Great value for money",
-      comment: "Very elegant design. Delivery was fast and the item arrived safely packed. Slightly darker shade than photo but still looks beautiful.",
-      status: "Approved",
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 5,
-    },
-    {
-      _id: "rev-004",
-      productId: "PRD-104",
-      productName: "Leather Handbag - Rose Gold",
-      reviewerName: "Ruwanthi Wickramasinghe",
-      reviewerEmail: "ruwanthi@example.com",
-      rating: 2,
-      title: "Smaller than expected",
-      comment: "The bag looks good but the zipper felt a bit stiff on arrival. Would appreciate better sizing details on the page.",
-      status: "Pending",
-      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: false,
-      likes: 1,
-    },
-    {
-      _id: "rev-005",
-      productId: "PRD-105",
-      productName: "Velvet Party Dress",
-      reviewerName: "Dilani Fernando",
-      reviewerEmail: "dilani@example.com",
-      rating: 5,
-      title: "Exceeded my expectations",
-      comment: "Super comfortable and sleek! Fits perfectly and matches all my outfits. Highly recommended for everyone.",
-      status: "Approved",
-      date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-      isVerified: true,
-      likes: 8,
-    },
-  ];
+ 
 
   const handleUpdateStatus = async (reviewId, newStatus) => {
     try {
