@@ -8,6 +8,7 @@ import AddUserPage from "./admin/AddUserPage";
 import EditUserPage from "./admin/EditUserPage";
 import EditProductPage from "./admin/EditProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
+import AdminReviewsPage from "./admin/AdminReviewsPage";
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ export default function AdminPage() {
               <Route path="/user" element={<UserPage />} />
               <Route path="/order" element={<AdminOrdersPage />} />
               <Route path="/orders" element={<AdminOrdersPage />} />
-              <Route path="/reviews" element={<h1 className="text-xl">Reviews</h1>} />
+              <Route path="/reviews" element={<AdminReviewsPage />} />
               <Route path="/addProduct" element={<AddProductPage />} />
               <Route path="/edit-user/:id" element={<EditUserPage />} />
               <Route path="/addUser" element={<AddUserPage />} />
