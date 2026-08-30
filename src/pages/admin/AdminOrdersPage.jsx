@@ -69,10 +69,7 @@ export default function AdminOrdersPage() {
     }
   }
 
-  // ==========================================
-  // UPDATE ORDER STATUS
-  // ==========================================
-
+  // updATE ORDER
   const handleUpdateStatus = async (
     orderId,
     newStatus,
@@ -84,8 +81,7 @@ export default function AdminOrdersPage() {
       const token = localStorage.getItem("token");
 
       const baseUrl = (
-        import.meta.env.VITE_BACKEND_URL ||
-        "http://localhost:3000"
+        import.meta.env.VITE_BACKEND_URL 
       ).replace(/\/+$/, "");
 
       const body = {};
@@ -198,9 +194,7 @@ export default function AdminOrdersPage() {
     }
   );
 
-  // ==========================================
-  // STATUS BADGE
-  // ==========================================
+  //Status bar
 
   const getStatusBadge = (status) => {
     const s = (
@@ -250,10 +244,7 @@ export default function AdminOrdersPage() {
       </span>
     );
   };
-
-  // ==========================================
-  // PAYMENT BADGE
-  // ==========================================
+//payment
 
   const getPaymentBadge = (status) => {
     const p = (
@@ -321,9 +312,7 @@ export default function AdminOrdersPage() {
         }
       );
 
-      // --------------------------------------
-      // ORDER INFORMATION
-      // --------------------------------------
+      
 
       doc.setFont(
         "helvetica",
@@ -334,7 +323,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Order ID: ${
-          order.orderId || "N/A"
+          order.orderId 
         }`,
         20,
         45
@@ -342,7 +331,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Customer: ${
-          order.name || "N/A"
+          order.name 
         }`,
         20,
         52
@@ -350,7 +339,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Email: ${
-          order.email || "N/A"
+          order.email 
         }`,
         20,
         59
@@ -358,7 +347,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Phone: ${
-          order.phone || "N/A"
+          order.phone 
         }`,
         20,
         66
@@ -407,9 +396,7 @@ export default function AdminOrdersPage() {
         94
       );
 
-      // --------------------------------------
-      // SHIPPING ADDRESS
-      // --------------------------------------
+    
 
       doc.setFont(
         "helvetica",
@@ -451,9 +438,7 @@ export default function AdminOrdersPage() {
         115
       );
 
-      // --------------------------------------
-      // PRODUCTS
-      // --------------------------------------
+      
 
       const products =
         order.products || [];
@@ -549,10 +534,7 @@ export default function AdminOrdersPage() {
         },
       });
 
-      // --------------------------------------
-      // TOTAL
-      // --------------------------------------
-
+      
       const finalY =
         doc.lastAutoTable &&
         doc.lastAutoTable.finalY
