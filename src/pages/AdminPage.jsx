@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
+import {
+  Package,
+  Users,
+  ShoppingCart,
+  Star,
+  LogOut,
+} from "lucide-react";
+
 import AdminProductPage from "./admin/AdminProductPage";
 import AddProductPage from "./admin/AddproductPage";
 import UserPage from "./admin/UserPage";
@@ -12,6 +20,7 @@ import AdminReviewsPage from "./admin/AdminReviewsPage";
 
 export default function AdminPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -21,8 +30,8 @@ export default function AdminPage() {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         userRole = payload.role;
-      } catch (e) {
-        console.error("Failed to parse token:", e);
+      } catch (error) {
+        console.error("Failed to parse token:", error);
       }
     }
 
@@ -34,68 +43,207 @@ export default function AdminPage() {
 
   const token = localStorage.getItem("token");
   let userRole = localStorage.getItem("role");
+
   if (token && !userRole) {
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
       userRole = payload.role;
-    } catch (e) {}
+    } catch (error) {
+      console.error("Failed to parse token:", error);
+    }
   }
 
-  // Prevent rendering admin panel if not an admin
   if (!token || userRole !== "admin") {
     return null;
   }
 
-  return (
-    <div>
-      <div className="flex h-screen bg-gray-50 font-sans">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-lg rounded-r-2xl p-6 flex flex-col gap-6">
-          <h2 className="text-2xl font-semibold mb-4 mt-[100px]">Admin Panel</h2>
-          <Link
-            to="/admin/products"
-            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Products
-          </Link>
-          <Link
-            to="/admin/user"
-            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Users
-          </Link>
-          <Link
-            to="/admin/order"
-            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Orders
-          </Link>
-          <Link
-            to="/admin/reviews"
-            className="px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Reviews
-          </Link>
-        </aside>
+  const menuItems = [
+    {
+      name: "Products",
+      path: "/admin/products",
+      icon: Package,
+    },
+    {
+      name: "Users",
+      path: "/admin/user",
+      icon: Users,
+    },
+    {
+      name: "Orders",
+      path: "/admin/order",
+      icon: ShoppingCart,
+    },
+    {
+      name: "Reviews",
+      path: "/admin/reviews",
+      icon: Star,
+    },
+  ];
 
-        {/* Main Content */}
-        <main className="flex-1 p-10 overflow-auto">
-          <div className="bg-white rounded-3xl shadow-xl p-8 mt-[50px]">
-            <Routes>
-              <Route path="/products" element={<AdminProductPage />} />
-              <Route path="/user" element={<UserPage />} />
-              <Route path="/order" element={<AdminOrdersPage />} />
-              <Route path="/orders" element={<AdminOrdersPage />} />
-              <Route path="/reviews" element={<AdminReviewsPage />} />
-              <Route path="/addProduct" element={<AddProductPage />} />
-              <Route path="/edit-user/:id" element={<EditUserPage />} />
-              <Route path="/addUser" element={<AddUserPage />} />
-              <Route path="/edit-product" element={<EditProductPage />} />
-              <Route path="/edit-product/:productId" element={<EditProductPage />} />
-            </Routes>
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+
+    toast.success("Logged out successfully");
+    navigate("/login");
+  };
+
+  return (
+    <div className="flex min-h-screen bg-[#f7f7f8] font-sans">
+
+      {/* Sidebar */}
+      <aside className="w-60 bg-white border-r border-gray-200 shadow-sm flex flex-col">
+
+        {/* Logo */}
+        <div className="px-6 py-7 border-b border-gray-100">
+          <h1 className="text-2xl font-bold text-[#8B1A24]">
+            LadyItem
+          </h1>
+
+          <p className="text-xs text-gray-400 mt-1">
+            Admin Panel
+          </p>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 px-4 py-6">
+
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-4">
+            Management
+          </p>
+
+          <div className="space-y-2">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+
+              const active =
+                location.pathname === item.path ||
+                location.pathname.startsWith(
+                  item.path.replace("/admin", "")
+                );
+
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                    active
+                      ? "bg-[#8B1A24] text-white shadow-md"
+                      : "text-gray-600 hover:bg-[#8B1A24]/10 hover:text-[#8B1A24]"
+                  }`}
+                >
+                  <Icon size={19} />
+
+                  <span className="font-medium text-sm">
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
-        </main>
-      </div>
+        </div>
+
+        {/* Admin Profile */}
+        <div className="px-4 pb-4">
+          <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3 border border-gray-100">
+            <div className="w-10 h-10 rounded-full bg-[#8B1A24] text-white flex items-center justify-center font-bold">
+              A
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold text-gray-800">
+                Admin
+              </p>
+
+              <p className="text-xs text-gray-400">
+                Administrator
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-gray-600 hover:text-[#8B1A24] hover:bg-[#8B1A24]/10 transition"
+          >
+            <LogOut size={18} />
+            <span className="text-sm font-medium">
+              Logout
+            </span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6 lg:p-8 overflow-auto">
+
+        {/* Page Header */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Welcome, Admin 👋
+          </h2>
+
+          <p className="text-sm text-gray-500 mt-1">
+            Manage your LadyItem store from here.
+          </p>
+        </div>
+
+        {/* Content Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[calc(100vh-150px)]">
+
+          <Routes>
+            <Route
+              path="/products"
+              element={<AdminProductPage />}
+            />
+
+            <Route
+              path="/user"
+              element={<UserPage />}
+            />
+
+            <Route
+              path="/order"
+              element={<AdminOrdersPage />}
+            />
+
+            <Route
+              path="/orders"
+              element={<AdminOrdersPage />}
+            />
+
+            <Route
+              path="/reviews"
+              element={<AdminReviewsPage />}
+            />
+
+            <Route
+              path="/addProduct"
+              element={<AddProductPage />}
+            />
+
+            <Route
+              path="/edit-user/:id"
+              element={<EditUserPage />}
+            />
+
+            <Route
+              path="/addUser"
+              element={<AddUserPage />}
+            />
+
+            <Route
+              path="/edit-product"
+              element={<EditProductPage />}
+            />
+
+            <Route
+              path="/edit-product/:productId"
+              element={<EditProductPage />}
+            />
+          </Routes>
+
+        </div>
+      </main>
     </div>
   );
 }
