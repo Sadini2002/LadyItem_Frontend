@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import toast from "react-hot-toast";
+
 import {
   Package,
   Users,
@@ -88,162 +95,185 @@ export default function AdminPage() {
     navigate("/login");
   };
 
+  const isActive = (path) => {
+    if (path === "/admin/products") {
+      return (
+        location.pathname === "/admin/products" ||
+        location.pathname.includes("/addProduct") ||
+        location.pathname.includes("/edit-product")
+      );
+    }
+
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <div className="flex min-h-screen bg-[#f7f7f8] font-sans">
+    <div className="min-h-screen bg-[#f7f7f8] font-sans pt-24">
 
-      {/* Sidebar */}
-      <aside className="w-60 bg-white border-r border-gray-200 shadow-sm flex flex-col">
+      <div className="flex min-h-[calc(100vh-96px)]">
 
-        {/* Logo */}
-        <div className="px-6 py-7 border-b border-gray-100">
-          <h1 className="text-2xl font-bold text-[#8B1A24]">
-            LadyItem
-          </h1>
+        {/* Sidebar */}
+        <aside className="w-60 bg-white border-r border-gray-200 shadow-sm flex flex-col">
 
-          <p className="text-xs text-gray-400 mt-1">
-            Admin Panel
-          </p>
-        </div>
+          {/* Logo */}
+          <div className="px-6 py-6 border-b border-gray-100">
+            <h1 className="text-2xl font-bold text-[#8B1A24]">
+              LadyItem
+            </h1>
 
-        {/* Navigation */}
-        <div className="flex-1 px-4 py-6">
+            <p className="text-xs text-gray-400 mt-1">
+              Admin Panel
+            </p>
+          </div>
 
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-4">
-            Management
-          </p>
+          {/* Navigation */}
+          <div className="flex-1 px-4 py-6">
 
-          <div className="space-y-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-4">
+              Management
+            </p>
 
-              const active =
-                location.pathname === item.path ||
-                location.pathname.startsWith(
-                  item.path.replace("/admin", "")
+            <div className="space-y-2">
+
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                      active
+                        ? "bg-[#8B1A24] text-white shadow-md"
+                        : "text-gray-600 hover:bg-[#8B1A24]/10 hover:text-[#8B1A24]"
+                    }`}
+                  >
+                    <Icon size={19} />
+
+                    <span className="font-medium text-sm">
+                      {item.name}
+                    </span>
+                  </Link>
                 );
+              })}
 
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                    active
-                      ? "bg-[#8B1A24] text-white shadow-md"
-                      : "text-gray-600 hover:bg-[#8B1A24]/10 hover:text-[#8B1A24]"
-                  }`}
-                >
-                  <Icon size={19} />
-
-                  <span className="font-medium text-sm">
-                    {item.name}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Admin Profile */}
-        <div className="px-4 pb-4">
-          <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3 border border-gray-100">
-            <div className="w-10 h-10 rounded-full bg-[#8B1A24] text-white flex items-center justify-center font-bold">
-              A
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-gray-800">
-                Admin
-              </p>
-
-              <p className="text-xs text-gray-400">
-                Administrator
-              </p>
             </div>
           </div>
 
-          <button
-            onClick={handleLogout}
-            className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-gray-600 hover:text-[#8B1A24] hover:bg-[#8B1A24]/10 transition"
-          >
-            <LogOut size={18} />
-            <span className="text-sm font-medium">
-              Logout
-            </span>
-          </button>
-        </div>
-      </aside>
+          {/* Admin Profile */}
+          <div className="px-4 pb-5">
 
-      {/* Main Content */}
-      <main className="flex-1 p-6 lg:p-8 overflow-auto">
+            <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3 border border-gray-100">
 
-        {/* Page Header */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Welcome, Admin 👋
-          </h2>
+              <div className="w-10 h-10 rounded-full bg-[#8B1A24] text-white flex items-center justify-center font-bold">
+                A
+              </div>
 
-          <p className="text-sm text-gray-500 mt-1">
-            Manage your LadyItem store from here.
-          </p>
-        </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">
+                  Admin
+                </p>
 
-        {/* Content Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[calc(100vh-150px)]">
+                <p className="text-xs text-gray-400">
+                  Administrator
+                </p>
+              </div>
 
-          <Routes>
-            <Route
-              path="/products"
-              element={<AdminProductPage />}
-            />
+            </div>
 
-            <Route
-              path="/user"
-              element={<UserPage />}
-            />
+            <button
+              onClick={handleLogout}
+              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-gray-600 hover:text-[#8B1A24] hover:bg-[#8B1A24]/10 transition"
+            >
+              <LogOut size={18} />
 
-            <Route
-              path="/order"
-              element={<AdminOrdersPage />}
-            />
+              <span className="text-sm font-medium">
+                Logout
+              </span>
+            </button>
 
-            <Route
-              path="/orders"
-              element={<AdminOrdersPage />}
-            />
+          </div>
+        </aside>
 
-            <Route
-              path="/reviews"
-              element={<AdminReviewsPage />}
-            />
+        {/* Main Content */}
+        <main className="flex-1 p-6 lg:p-8 overflow-auto">
 
-            <Route
-              path="/addProduct"
-              element={<AddProductPage />}
-            />
+          {/* Page Header */}
+          <div className="mb-6">
 
-            <Route
-              path="/edit-user/:id"
-              element={<EditUserPage />}
-            />
+            <h2 className="text-2xl font-bold text-gray-800">
+              Welcome, Admin 👋
+            </h2>
 
-            <Route
-              path="/addUser"
-              element={<AddUserPage />}
-            />
+            <p className="text-sm text-gray-500 mt-1">
+              Manage your LadyItem store from here.
+            </p>
 
-            <Route
-              path="/edit-product"
-              element={<EditProductPage />}
-            />
+          </div>
 
-            <Route
-              path="/edit-product/:productId"
-              element={<EditProductPage />}
-            />
-          </Routes>
+          {/* Content */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[calc(100vh-190px)]">
 
-        </div>
-      </main>
+            <Routes>
+
+              <Route
+                path="/products"
+                element={<AdminProductPage />}
+              />
+
+              <Route
+                path="/user"
+                element={<UserPage />}
+              />
+
+              <Route
+                path="/order"
+                element={<AdminOrdersPage />}
+              />
+
+              <Route
+                path="/orders"
+                element={<AdminOrdersPage />}
+              />
+
+              <Route
+                path="/reviews"
+                element={<AdminReviewsPage />}
+              />
+
+              <Route
+                path="/addProduct"
+                element={<AddProductPage />}
+              />
+
+              <Route
+                path="/edit-user/:id"
+                element={<EditUserPage />}
+              />
+
+              <Route
+                path="/addUser"
+                element={<AddUserPage />}
+              />
+
+              <Route
+                path="/edit-product"
+                element={<EditProductPage />}
+              />
+
+              <Route
+                path="/edit-product/:productId"
+                element={<EditProductPage />}
+              />
+
+            </Routes>
+
+          </div>
+
+        </main>
+
+      </div>
     </div>
   );
 }
