@@ -182,16 +182,7 @@ export default function AdminPage() {
 
             </div>
 
-            <button
-              onClick={handleLogout}
-              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-gray-600 hover:text-[#8B1A24] hover:bg-[#8B1A24]/10 transition"
-            >
-              <LogOut size={18} />
-
-              <span className="text-sm font-medium">
-                Logout
-              </span>
-            </button>
+            
 
           </div>
         </aside>
@@ -199,18 +190,7 @@ export default function AdminPage() {
         {/* Main Content */}
         <main className="flex-1 p-6 lg:p-8 overflow-auto">
 
-          {/* Page Header */}
-          <div className="mb-6">
-
-            <h2 className="text-2xl font-bold text-gray-800">
-              Welcome, Admin 👋
-            </h2>
-
-            <p className="text-sm text-gray-500 mt-1">
-              Manage your LadyItem store from here.
-            </p>
-
-          </div>
+          
 
           {/* Content */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[calc(100vh-190px)]">
