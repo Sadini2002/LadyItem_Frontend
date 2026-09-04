@@ -17,6 +17,7 @@ import {
   Phone,
   Mail,
   Download,
+  Trash2,
 } from "lucide-react";
 
 export default function AdminOrdersPage() {
@@ -29,10 +30,15 @@ export default function AdminOrdersPage() {
 
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  // ==============================
+  // FETCH ORDERS
+  // ==============================
 
   async function fetchOrders() {
     try {
@@ -47,7 +53,7 @@ export default function AdminOrdersPage() {
       }
 
       const baseUrl = (
-        import.meta.env.VITE_BACKEND_URL
+        import.meta.env.VITE_BACKEND_URL || ""
       ).replace(/\/+$/, "");
 
       const res = await axios.get(`${baseUrl}/orders`, {
@@ -69,7 +75,10 @@ export default function AdminOrdersPage() {
     }
   }
 
-  // updATE ORDER
+  // ==============================
+  // UPDATE ORDER STATUS
+  // ==============================
+
   const handleUpdateStatus = async (
     orderId,
     newStatus,
@@ -81,7 +90,7 @@ export default function AdminOrdersPage() {
       const token = localStorage.getItem("token");
 
       const baseUrl = (
-        import.meta.env.VITE_BACKEND_URL 
+        import.meta.env.VITE_BACKEND_URL || ""
       ).replace(/\/+$/, "");
 
       const body = {};
@@ -105,17 +114,16 @@ export default function AdminOrdersPage() {
         }
       );
 
-      toast.success("Order status updated!");
+      toast.success("Order updated successfully!");
 
-      // Update local state
       setOrders((prev) =>
-        prev.map((o) =>
-          o._id === orderId
+        prev.map((order) =>
+          order._id === orderId
             ? {
-                ...o,
+                ...order,
                 ...res.data.order,
               }
-            : o
+            : order
         )
       );
 
@@ -130,7 +138,7 @@ export default function AdminOrdersPage() {
       }
     } catch (error) {
       console.error(
-        "Failed to update status:",
+        "Failed to update order:",
         error
       );
 
@@ -143,9 +151,83 @@ export default function AdminOrdersPage() {
     }
   };
 
-  // ==========================================
+  // ==============================
+  // DELETE ORDER
+  // ==============================
+
+  const handleDeleteOrder = async (orderId) => {
+    const order = orders.find(
+      (item) => item._id === orderId
+    );
+
+    const orderNumber =
+      order?.orderId || orderId;
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete order ${orderNumber}?\n\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingId(orderId);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        toast.error("Admin not logged in");
+        return;
+      }
+
+      const baseUrl = (
+        import.meta.env.VITE_BACKEND_URL || ""
+      ).replace(/\/+$/, "");
+
+      await axios.delete(
+        `${baseUrl}/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setOrders((prev) =>
+        prev.filter(
+          (order) => order._id !== orderId
+        )
+      );
+
+      if (
+        selectedOrder &&
+        selectedOrder._id === orderId
+      ) {
+        setSelectedOrder(null);
+      }
+
+      toast.success(
+        "Order deleted successfully!"
+      );
+    } catch (error) {
+      console.error(
+        "Failed to delete order:",
+        error
+      );
+
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to delete order"
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // ==============================
   // FILTER ORDERS
-  // ==========================================
+  // ==============================
 
   const filteredOrders = orders.filter(
     (order) => {
@@ -175,15 +257,13 @@ export default function AdminOrdersPage() {
       const matchesStatus =
         statusFilter === "all" ||
         (order.status &&
-          order.status
-            .toLowerCase() ===
+          order.status.toLowerCase() ===
             statusFilter.toLowerCase());
 
       const matchesPayment =
         paymentFilter === "all" ||
         (order.paymentStatus &&
-          order.paymentStatus
-            .toLowerCase() ===
+          order.paymentStatus.toLowerCase() ===
             paymentFilter.toLowerCase());
 
       return (
@@ -194,7 +274,9 @@ export default function AdminOrdersPage() {
     }
   );
 
-  //Status bar
+  // ==============================
+  // STATUS BADGE
+  // ==============================
 
   const getStatusBadge = (status) => {
     const s = (
@@ -244,7 +326,10 @@ export default function AdminOrdersPage() {
       </span>
     );
   };
-//payment
+
+  // ==============================
+  // PAYMENT BADGE
+  // ==============================
 
   const getPaymentBadge = (status) => {
     const p = (
@@ -266,24 +351,18 @@ export default function AdminOrdersPage() {
     );
   };
 
-  // ==========================================
+  // ==============================
   // DOWNLOAD ORDER PDF
-  // ==========================================
+  // ==============================
 
   const downloadOrderPDF = (order) => {
     try {
       if (!order) {
-        toast.error(
-          "Order details not found"
-        );
+        toast.error("Order details not found");
         return;
       }
 
       const doc = new jsPDF();
-
-      // --------------------------------------
-      // HEADER
-      // --------------------------------------
 
       doc.setFont(
         "helvetica",
@@ -312,8 +391,6 @@ export default function AdminOrdersPage() {
         }
       );
 
-      
-
       doc.setFont(
         "helvetica",
         "normal"
@@ -322,33 +399,25 @@ export default function AdminOrdersPage() {
       doc.setFontSize(11);
 
       doc.text(
-        `Order ID: ${
-          order.orderId 
-        }`,
+        `Order ID: ${order.orderId || "N/A"}`,
         20,
         45
       );
 
       doc.text(
-        `Customer: ${
-          order.name 
-        }`,
+        `Customer: ${order.name || "N/A"}`,
         20,
         52
       );
 
       doc.text(
-        `Email: ${
-          order.email 
-        }`,
+        `Email: ${order.email || "N/A"}`,
         20,
         59
       );
 
       doc.text(
-        `Phone: ${
-          order.phone 
-        }`,
+        `Phone: ${order.phone || "N/A"}`,
         20,
         66
       );
@@ -371,8 +440,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Order Status: ${
-          order.status ||
-          "Pending"
+          order.status || "Pending"
         }`,
         20,
         80
@@ -380,8 +448,7 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Payment Status: ${
-          order.paymentStatus ||
-          "Unpaid"
+          order.paymentStatus || "Unpaid"
         }`,
         20,
         87
@@ -389,14 +456,11 @@ export default function AdminOrdersPage() {
 
       doc.text(
         `Payment Method: ${
-          order.paymentMethod ||
-          "COD"
+          order.paymentMethod || "COD"
         }`,
         20,
         94
       );
-
-    
 
       doc.setFont(
         "helvetica",
@@ -425,7 +489,6 @@ export default function AdminOrdersPage() {
           ? addressParts.join(", ")
           : "No shipping address provided";
 
-      // Handle long address
       const addressLines =
         doc.splitTextToSize(
           fullAddress,
@@ -438,8 +501,6 @@ export default function AdminOrdersPage() {
         115
       );
 
-      
-
       const products =
         order.products || [];
 
@@ -449,18 +510,13 @@ export default function AdminOrdersPage() {
             item.productInfo || {};
 
           const productName =
-            info.name ||
-            "Product";
+            info.name || "Product";
 
           const quantity =
-            Number(
-              item.quantity
-            ) || 1;
+            Number(item.quantity) || 1;
 
           const price =
-            Number(
-              info.price
-            ) || 0;
+            Number(info.price) || 0;
 
           const itemTotal =
             price * quantity;
@@ -534,12 +590,10 @@ export default function AdminOrdersPage() {
         },
       });
 
-      
       const finalY =
         doc.lastAutoTable &&
         doc.lastAutoTable.finalY
-          ? doc.lastAutoTable.finalY +
-            15
+          ? doc.lastAutoTable.finalY + 15
           : tableStartY + 30;
 
       doc.setFont(
@@ -558,10 +612,6 @@ export default function AdminOrdersPage() {
         finalY
       );
 
-      // --------------------------------------
-      // FOOTER
-      // --------------------------------------
-
       doc.setFont(
         "helvetica",
         "normal"
@@ -577,10 +627,6 @@ export default function AdminOrdersPage() {
           align: "center",
         }
       );
-
-      // --------------------------------------
-      // DOWNLOAD
-      // --------------------------------------
 
       const orderNumber =
         order.orderId ||
@@ -606,16 +652,14 @@ export default function AdminOrdersPage() {
     }
   };
 
-  // ==========================================
+  // ==============================
   // PAGE
-  // ==========================================
+  // ==============================
 
   return (
     <div className="space-y-6">
 
-      {/* ======================================
-          HEADER
-      ====================================== */}
+      {/* HEADER */}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200">
 
@@ -625,7 +669,7 @@ export default function AdminOrdersPage() {
           </h1>
 
           <p className="text-sm text-gray-500 mt-1">
-            View, track, and update all
+            View, track, update, and delete
             customer orders
           </p>
         </div>
@@ -639,13 +683,11 @@ export default function AdminOrdersPage() {
 
       </div>
 
-      {/* ======================================
-          FILTERS
-      ====================================== */}
+      {/* FILTERS */}
 
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
 
-        {/* Search */}
+        {/* SEARCH */}
 
         <div className="sm:col-span-6 relative">
 
@@ -668,7 +710,7 @@ export default function AdminOrdersPage() {
 
         </div>
 
-        {/* Order Status */}
+        {/* ORDER STATUS */}
 
         <div className="sm:col-span-3">
 
@@ -681,7 +723,6 @@ export default function AdminOrdersPage() {
             }
             className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900 transition text-sm bg-white text-gray-700"
           >
-
             <option value="all">
               All Order Statuses
             </option>
@@ -705,12 +746,11 @@ export default function AdminOrdersPage() {
             <option value="cancelled">
               Cancelled
             </option>
-
           </select>
 
         </div>
 
-        {/* Payment Status */}
+        {/* PAYMENT STATUS */}
 
         <div className="sm:col-span-3">
 
@@ -723,7 +763,6 @@ export default function AdminOrdersPage() {
             }
             className="w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900 transition text-sm bg-white text-gray-700"
           >
-
             <option value="all">
               All Payment Statuses
             </option>
@@ -735,16 +774,13 @@ export default function AdminOrdersPage() {
             <option value="unpaid">
               Unpaid
             </option>
-
           </select>
 
         </div>
 
       </div>
 
-      {/* ======================================
-          ORDERS TABLE
-      ====================================== */}
+      {/* ORDERS TABLE */}
 
       {loading ? (
 
@@ -770,13 +806,11 @@ export default function AdminOrdersPage() {
           </p>
 
           <p className="text-xs text-gray-500 mt-1">
-
             {searchQuery ||
             statusFilter !== "all" ||
             paymentFilter !== "all"
               ? "Try adjusting your filters or search terms."
               : "No customer orders have been placed yet."}
-
           </p>
 
         </div>
@@ -835,6 +869,10 @@ export default function AdminOrdersPage() {
                         ).toLocaleDateString()
                       : "N/A";
 
+                  const isDeleting =
+                    deletingId ===
+                    order._id;
+
                   return (
 
                     <tr
@@ -842,15 +880,13 @@ export default function AdminOrdersPage() {
                       className="hover:bg-gray-50/80 transition"
                     >
 
-                      {/* Order ID */}
+                      {/* ORDER ID */}
 
                       <td className="py-4 px-4 font-mono font-bold text-gray-900">
-
                         {order.orderId}
-
                       </td>
 
-                      {/* Customer */}
+                      {/* CUSTOMER */}
 
                       <td className="py-4 px-4">
 
@@ -864,27 +900,24 @@ export default function AdminOrdersPage() {
 
                       </td>
 
-                      {/* Date */}
+                      {/* DATE */}
 
                       <td className="py-4 px-4 text-xs text-gray-500">
-
                         {dateStr}
-
                       </td>
 
-                      {/* Total */}
+                      {/* TOTAL */}
 
                       <td className="py-4 px-4 font-bold text-gray-900">
-
                         Rs.{" "}
                         {(
-                          order.total ||
-                          0
+                          Number(
+                            order.total
+                          ) || 0
                         ).toLocaleString()}
-
                       </td>
 
-                      {/* Payment */}
+                      {/* PAYMENT */}
 
                       <td className="py-4 px-4">
 
@@ -895,17 +928,15 @@ export default function AdminOrdersPage() {
                           )}
 
                           <span className="text-[11px] text-gray-500 uppercase font-medium">
-
                             {order.paymentMethod ||
                               "COD"}
-
                           </span>
 
                         </div>
 
                       </td>
 
-                      {/* Status */}
+                      {/* STATUS */}
 
                       <td className="py-4 px-4">
 
@@ -916,7 +947,8 @@ export default function AdminOrdersPage() {
                           }
                           disabled={
                             updatingId ===
-                            order._id
+                            order._id ||
+                            isDeleting
                           }
                           onChange={(e) =>
                             handleUpdateStatus(
@@ -952,27 +984,58 @@ export default function AdminOrdersPage() {
 
                       </td>
 
-                      {/* View */}
+                      {/* ACTIONS */}
 
-                      <td className="py-4 px-4 text-right">
+                      <td className="py-4 px-4">
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSelectedOrder(
-                              order
-                            )
-                          }
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium rounded-lg transition"
-                        >
+                        <div className="flex justify-end items-center gap-2">
 
-                          <Eye
-                            size={14}
-                          />
+                          {/* VIEW */}
 
-                          View
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSelectedOrder(
+                                order
+                              )
+                            }
+                            disabled={isDeleting}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium rounded-lg transition disabled:opacity-50"
+                          >
+                            <Eye size={14} />
+                            View
+                          </button>
 
-                        </button>
+                          {/* DELETE */}
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDeleteOrder(
+                                order._id
+                              )
+                            }
+                            disabled={isDeleting}
+                            className="inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded-lg transition disabled:opacity-50"
+                          >
+
+                            {isDeleting ? (
+                              <>
+                                <div className="w-3 h-3 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+                                Deleting
+                              </>
+                            ) : (
+                              <>
+                                <Trash2
+                                  size={14}
+                                />
+                                Delete
+                              </>
+                            )}
+
+                          </button>
+
+                        </div>
 
                       </td>
 
@@ -990,9 +1053,7 @@ export default function AdminOrdersPage() {
 
       )}
 
-      {/* ======================================
-          ORDER DETAILS MODAL
-      ====================================== */}
+      {/* ORDER DETAILS MODAL */}
 
       {selectedOrder && (
 
@@ -1010,9 +1071,7 @@ export default function AdminOrdersPage() {
             }
           >
 
-            {/* =================================
-                MODAL HEADER
-            ================================= */}
+            {/* MODAL HEADER */}
 
             <div className="flex items-center justify-between pb-4 border-b border-gray-200">
 
@@ -1031,9 +1090,7 @@ export default function AdminOrdersPage() {
               <button
                 type="button"
                 onClick={() =>
-                  setSelectedOrder(
-                    null
-                  )
+                  setSelectedOrder(null)
                 }
                 className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 flex items-center justify-center transition font-bold"
               >
@@ -1042,14 +1099,11 @@ export default function AdminOrdersPage() {
 
             </div>
 
-            {/* =================================
-                QUICK STATUS BAR
-            ================================= */}
+            {/* STATUS BAR */}
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100 text-xs">
 
               <div>
-
                 <span className="text-gray-400 block mb-1">
                   Status
                 </span>
@@ -1057,11 +1111,9 @@ export default function AdminOrdersPage() {
                 {getStatusBadge(
                   selectedOrder.status
                 )}
-
               </div>
 
               <div>
-
                 <span className="text-gray-400 block mb-1">
                   Payment
                 </span>
@@ -1069,47 +1121,36 @@ export default function AdminOrdersPage() {
                 {getPaymentBadge(
                   selectedOrder.paymentStatus
                 )}
-
               </div>
 
               <div>
-
                 <span className="text-gray-400 block mb-1">
                   Method
                 </span>
 
                 <span className="font-bold text-gray-800 uppercase">
-
                   {selectedOrder.paymentMethod ||
                     "COD"}
-
                 </span>
-
               </div>
 
               <div>
-
                 <span className="text-gray-400 block mb-1">
                   Date
                 </span>
 
                 <span className="font-semibold text-gray-700">
-
                   {selectedOrder.date
                     ? new Date(
                         selectedOrder.date
                       ).toLocaleDateString()
                     : "N/A"}
-
                 </span>
-
               </div>
 
             </div>
 
-            {/* =================================
-                QUICK ACTIONS
-            ================================= */}
+            {/* QUICK ACTIONS */}
 
             <div className="p-4 bg-gray-100 rounded-2xl space-y-3">
 
@@ -1121,6 +1162,10 @@ export default function AdminOrdersPage() {
 
                 <button
                   type="button"
+                  disabled={
+                    updatingId ===
+                    selectedOrder._id
+                  }
                   onClick={() =>
                     handleUpdateStatus(
                       selectedOrder._id,
@@ -1128,13 +1173,17 @@ export default function AdminOrdersPage() {
                       null
                     )
                   }
-                  className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition"
+                  className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition disabled:opacity-50"
                 >
                   Mark Processing
                 </button>
 
                 <button
                   type="button"
+                  disabled={
+                    updatingId ===
+                    selectedOrder._id
+                  }
                   onClick={() =>
                     handleUpdateStatus(
                       selectedOrder._id,
@@ -1142,13 +1191,17 @@ export default function AdminOrdersPage() {
                       null
                     )
                   }
-                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition"
+                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition disabled:opacity-50"
                 >
                   Mark Shipped
                 </button>
 
                 <button
                   type="button"
+                  disabled={
+                    updatingId ===
+                    selectedOrder._id
+                  }
                   onClick={() =>
                     handleUpdateStatus(
                       selectedOrder._id,
@@ -1156,13 +1209,17 @@ export default function AdminOrdersPage() {
                       null
                     )
                   }
-                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition"
+                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition disabled:opacity-50"
                 >
                   Mark Delivered
                 </button>
 
                 <button
                   type="button"
+                  disabled={
+                    updatingId ===
+                    selectedOrder._id
+                  }
                   onClick={() =>
                     handleUpdateStatus(
                       selectedOrder._id,
@@ -1173,7 +1230,7 @@ export default function AdminOrdersPage() {
                         : "Paid"
                     )
                   }
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition"
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition disabled:opacity-50"
                 >
                   Toggle Paid / Unpaid
                 </button>
@@ -1182,9 +1239,7 @@ export default function AdminOrdersPage() {
 
             </div>
 
-            {/* =================================
-                CUSTOMER DETAILS
-            ================================= */}
+            {/* CUSTOMER DETAILS */}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-b border-gray-200 py-4 text-xs">
 
@@ -1238,7 +1293,7 @@ export default function AdminOrdersPage() {
 
               </div>
 
-              {/* Shipping */}
+              {/* SHIPPING */}
 
               <div className="space-y-2">
 
@@ -1274,9 +1329,7 @@ export default function AdminOrdersPage() {
 
             </div>
 
-            {/* =================================
-                ORDER ITEMS
-            ================================= */}
+            {/* ORDER ITEMS */}
 
             <div>
 
@@ -1330,7 +1383,8 @@ export default function AdminOrdersPage() {
                                   : info.image
                               }
                               alt={
-                                info.name
+                                info.name ||
+                                "Product"
                               }
                               className="w-10 h-10 rounded-lg object-cover bg-gray-200 border border-gray-200"
                               onError={(e) => {
@@ -1349,11 +1403,9 @@ export default function AdminOrdersPage() {
                             </p>
 
                             <p className="text-gray-500">
-
                               Unit Price: Rs.{" "}
                               {price.toLocaleString()}{" "}
                               × {quantity}
-
                             </p>
 
                           </div>
@@ -1361,10 +1413,8 @@ export default function AdminOrdersPage() {
                         </div>
 
                         <span className="font-bold text-gray-900">
-
                           Rs.{" "}
                           {itemTotal.toLocaleString()}
-
                         </span>
 
                       </div>
@@ -1375,9 +1425,7 @@ export default function AdminOrdersPage() {
 
               </div>
 
-              {/* =================================
-                  TOTAL
-              ================================= */}
+              {/* TOTAL */}
 
               <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between items-baseline text-sm">
 
@@ -1386,58 +1434,88 @@ export default function AdminOrdersPage() {
                 </span>
 
                 <span className="text-xl font-black text-gray-900">
-
                   Rs.{" "}
                   {(
-                    selectedOrder.total ||
-                    0
+                    Number(
+                      selectedOrder.total
+                    ) || 0
                   ).toLocaleString()}
-
                 </span>
 
               </div>
 
             </div>
 
-            {/* =================================
-                MODAL FOOTER
-            ================================= */}
+            {/* MODAL FOOTER */}
 
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-gray-200">
 
-              {/* Close */}
+              {/* DELETE */}
 
               <button
                 type="button"
                 onClick={() =>
-                  setSelectedOrder(
-                    null
+                  handleDeleteOrder(
+                    selectedOrder._id
                   )
                 }
-                className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition"
-              >
-                Close
-              </button>
-
-              {/* Download PDF */}
-
-              <button
-                type="button"
-                onClick={() =>
-                  downloadOrderPDF(
-                    selectedOrder
-                  )
+                disabled={
+                  deletingId ===
+                  selectedOrder._id
                 }
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#8B1A24] hover:bg-[#A61F2C] text-white font-semibold transition shadow-sm"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 font-semibold transition disabled:opacity-50"
               >
 
-                <Download
-                  size={17}
-                />
-
-                Download PDF
+                {deletingId ===
+                selectedOrder._id ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-red-700 border-t-transparent rounded-full animate-spin"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={17} />
+                    Delete Order
+                  </>
+                )}
 
               </button>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+
+                {/* CLOSE */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSelectedOrder(
+                      null
+                    )
+                  }
+                  className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition"
+                >
+                  Close
+                </button>
+
+                {/* DOWNLOAD PDF */}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadOrderPDF(
+                      selectedOrder
+                    )
+                  }
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#8B1A24] hover:bg-[#A61F2C] text-white font-semibold transition shadow-sm"
+                >
+
+                  <Download size={17} />
+
+                  Download PDF
+
+                </button>
+
+              </div>
 
             </div>
 
