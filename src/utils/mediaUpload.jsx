@@ -11,7 +11,7 @@ export default async function mediaUpload(file, retries = 2) {
   }
 
   const timeStamp = Date.now();
-  // Sanitize filename to avoid URL encoding issues with spaces or special characters
+  // avoid URL encoding issues with spaces or special characters
   const sanitizedFileName = file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "image.jpg";
   const newName = `${timeStamp}_${sanitizedFileName}`;
   const filePath = `public/${newName}`;
