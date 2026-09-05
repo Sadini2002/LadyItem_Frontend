@@ -42,6 +42,7 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    localStorage.removeItem("user");
 
     setToken("");
     setRole("");
@@ -108,12 +109,18 @@ const Header = () => {
         <div className="hidden lg:flex items-center gap-5">
 
           {/* Search */}
-          <button className="hover:text-[#8B1A24] transition">
+          <button
+            className="hover:text-[#8B1A24] transition"
+            title="Search"
+          >
             <Search size={20} />
           </button>
 
           {/* Wishlist */}
-          <button className="hover:text-[#8B1A24] transition">
+          <button
+            className="hover:text-[#8B1A24] transition"
+            title="Wishlist"
+          >
             <Heart size={20} />
           </button>
 
@@ -121,6 +128,7 @@ const Header = () => {
           <Link
             to="/cart"
             className="relative hover:text-[#8B1A24] transition"
+            title="Cart"
           >
             <ShoppingBag size={20} />
 
@@ -130,6 +138,17 @@ const Header = () => {
               </span>
             )}
           </Link>
+
+          {/* Profile */}
+          {token && (
+            <Link
+              to="/profile"
+              className="hover:text-[#8B1A24] transition"
+              title="Profile"
+            >
+              <User size={20} />
+            </Link>
+          )}
 
           {/* Login / Logout */}
           {token ? (
@@ -163,8 +182,10 @@ const Header = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden mt-4 bg-white/95 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl p-6 max-w-sm mx-auto">
+
           <ul className="flex flex-col gap-4">
 
+            {/* Navigation Links */}
             {navLinks.map((link) => (
               <li key={link.name}>
                 <Link
@@ -181,25 +202,44 @@ const Header = () => {
               </li>
             ))}
 
+            {/* Profile */}
+            {token && (
+              <li>
+                <Link
+                  to="/profile"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-2 text-lg font-medium hover:text-[#8B1A24]"
+                >
+                  <User size={20} />
+                  Profile
+                </Link>
+              </li>
+            )}
+
+            {/* Logout / Login */}
             {token ? (
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  handleLogout();
-                }}
-                className="mt-4 bg-[#8B1A24] text-white py-3 rounded-full hover:bg-[#A61F2C] transition flex items-center justify-center gap-2 font-medium"
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
+              <li>
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full mt-4 bg-[#8B1A24] text-white py-3 rounded-full hover:bg-[#A61F2C] transition flex items-center justify-center gap-2 font-medium"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </li>
             ) : (
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="mt-4 bg-[#8B1A24] text-white text-center py-3 rounded-full hover:bg-[#FF8A75] transition"
-              >
-                Login
-              </Link>
+              <li>
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block mt-4 bg-[#8B1A24] text-white text-center py-3 rounded-full hover:bg-[#FF8A75] transition"
+                >
+                  Login
+                </Link>
+              </li>
             )}
 
           </ul>
