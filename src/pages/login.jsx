@@ -1,16 +1,25 @@
+
 import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import AdminPage from "./AdminPage";
+import { GrGoogle } from "react-icons/gr";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+function loginWithGoogle() {
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/users/google-login`;
+  }
 
+
+
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
     try {
@@ -19,7 +28,6 @@ const Login = () => {
         {
           email,
           password,
-
         }
       );
 
@@ -35,23 +43,53 @@ const Login = () => {
       } else {
         navigate("/products");
       }
-
     } catch (error) {
       console.log("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
   }
 
+  async function handleGoogleLogin(response) {
+    try {
+      const result = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/google-login`,
+        {
+          credential: response.credential,
+        }
+      );
+
+      console.log("Google login successful:", result.data);
+
+      toast.success("Google login successful!");
+
+      const role = result.data.role || "user";
+
+      localStorage.setItem("token", result.data.token);
+      localStorage.setItem("role", role);
+
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/products");
+      }
+    } catch (error) {
+      console.log("Google login error:", error);
+      toast.error("Google login failed.");
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#121212] px-4">
+
       {/* Background Glow */}
       <div className="absolute top-[-120px] left-[-120px] w-[350px] h-[350px] bg-[#8B1A24]/30 rounded-full blur-3xl"></div>
 
       <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-[#FF8A75]/20 rounded-full blur-3xl"></div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md ">
+      <div className="relative z-10 w-full max-w-md">
         <div className="bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 rounded-3xl shadow-2xl p-8">
+
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-[#8B1A24] border-2 border-[#FF8A75] flex items-center justify-center shadow-lg">
@@ -74,6 +112,7 @@ const Login = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+
             {/* Email */}
             <div>
               <label className="block text-sm text-gray-300 mb-2 font-medium">
@@ -124,6 +163,21 @@ const Login = () => {
               Login
             </button>
 
+            {/* Google Login */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleLogin}
+                onError={() => {
+                  toast.error("Google login failed.");
+                }}
+                theme="filled_black"
+                size="large"
+                text="signin_with"
+                shape="rectangular"
+                width="350"
+              />
+            </div>
+
             {/* Sign Up */}
             <p className="text-center text-gray-300 text-sm">
               Don't have an account?{" "}
@@ -134,6 +188,7 @@ const Login = () => {
                 Sign Up
               </Link>
             </p>
+
           </form>
         </div>
       </div>
@@ -142,3 +197,4 @@ const Login = () => {
 };
 
 export default Login;
+
