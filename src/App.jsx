@@ -16,10 +16,11 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import Testing from "./pages/Testing";
 import { CartProvider } from "./context/CartContext";
 import UserProfilePage from "./pages/UserProfilePage";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 function App() {
   return (
-    <CartProvider>
+    <GoogleOAuthProvider clientId="405090821825-s5cmu9raur3lm4q9bkb28pbkko3ffeai.apps.googleusercontent.com">   
+     <CartProvider>
       <BrowserRouter>
         <div>
           <Toaster position="top-right" />
@@ -47,6 +48,7 @@ function App() {
         </div>
       </BrowserRouter>
     </CartProvider>
+    </GoogleOAuthProvider>
   );
 }
 
