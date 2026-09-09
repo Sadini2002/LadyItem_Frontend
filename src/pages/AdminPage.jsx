@@ -13,6 +13,7 @@ import {
   Users,
   ShoppingCart,
   Star,
+  MessageSquareDashed ,
   LogOut,
 } from "lucide-react";
 
@@ -24,6 +25,9 @@ import EditUserPage from "./admin/EditUserPage";
 import EditProductPage from "./admin/EditProductPage";
 import AdminOrdersPage from "./admin/AdminOrdersPage";
 import AdminReviewsPage from "./admin/AdminReviewsPage";
+import AdminMessages from "./admin/AdminMessages";
+
+
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -85,6 +89,11 @@ export default function AdminPage() {
       path: "/admin/reviews",
       icon: Star,
     },
+    {
+      name: "Messages",
+      path: "/admin/messages",
+      icon: MessageSquareDashed,
+    }
   ];
 
   const handleLogout = () => {
@@ -246,6 +255,10 @@ export default function AdminPage() {
                 path="/edit-product/:productId"
                 element={<EditProductPage />}
               />
+              <Route
+                path="/messages"
+                element={<AdminMessages />}
+              />  
 
             </Routes>
 

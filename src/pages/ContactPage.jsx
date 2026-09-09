@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ export default function ContactPage() {
     message: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   function handleChange(e) {
     setFormData({
       ...formData,
@@ -16,21 +19,44 @@ export default function ContactPage() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
+    // Validate fields
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill all fields");
       return;
     }
 
-    toast.success("Message sent successfully!");
+    try {
+      setLoading(true);
 
-    setFormData({
-      name: "",
-      email: "",
-      message: "",
-    });
+      // Send message to backend
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/messages`,
+        formData
+      );
+
+      console.log("Message response:", response.data);
+
+      toast.success("Message sent successfully!");
+
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      console.error("Server response:", error.response?.data);
+
+      toast.error(
+        error.response?.data?.message || "Failed to send message."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -61,7 +87,6 @@ export default function ContactPage() {
 
         </div>
 
-
         {/* Contact Card */}
         <div className="grid md:grid-cols-2 gap-8">
 
@@ -83,6 +108,7 @@ export default function ContactPage() {
                 <p className="text-[#FF8A75] font-semibold">
                   Email
                 </p>
+
                 <p className="text-white/80">
                   support@ladyitem.com
                 </p>
@@ -92,6 +118,7 @@ export default function ContactPage() {
                 <p className="text-[#FF8A75] font-semibold">
                   Phone
                 </p>
+
                 <p className="text-white/80">
                   +94 71 234 5678
                 </p>
@@ -101,6 +128,7 @@ export default function ContactPage() {
                 <p className="text-[#FF8A75] font-semibold">
                   Location
                 </p>
+
                 <p className="text-white/80">
                   Sri Lanka
                 </p>
@@ -109,7 +137,6 @@ export default function ContactPage() {
             </div>
 
           </div>
-
 
           {/* Contact Form */}
           <div className="rounded-3xl bg-white/70 backdrop-blur-xl border border-white/40 shadow-xl p-8">
@@ -120,6 +147,7 @@ export default function ContactPage() {
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
+              {/* Name */}
               <input
                 type="text"
                 name="name"
@@ -129,6 +157,7 @@ export default function ContactPage() {
                 className="w-full px-4 py-3 rounded-xl bg-[#FFF5F4] border border-[#FFE5E0] focus:border-[#FF8A75] focus:outline-none"
               />
 
+              {/* Email */}
               <input
                 type="email"
                 name="email"
@@ -138,6 +167,7 @@ export default function ContactPage() {
                 className="w-full px-4 py-3 rounded-xl bg-[#FFF5F4] border border-[#FFE5E0] focus:border-[#FF8A75] focus:outline-none"
               />
 
+              {/* Message */}
               <textarea
                 name="message"
                 placeholder="Your Message"
@@ -147,11 +177,13 @@ export default function ContactPage() {
                 className="w-full px-4 py-3 rounded-xl bg-[#FFF5F4] border border-[#FFE5E0] focus:border-[#FF8A75] focus:outline-none resize-none"
               />
 
+              {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#8B1A24] text-white font-semibold hover:bg-[#6E121C] transition"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-[#8B1A24] text-white font-semibold hover:bg-[#6E121C] transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </button>
 
             </form>
@@ -159,7 +191,6 @@ export default function ContactPage() {
           </div>
 
         </div>
-
 
         {/* Back to Products */}
         <div className="text-center mt-10">
