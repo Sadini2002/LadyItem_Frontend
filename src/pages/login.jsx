@@ -3,8 +3,6 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import AdminPage from "./AdminPage";
-import { GrGoogle } from "react-icons/gr";
 import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
@@ -12,13 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-function loginWithGoogle() {
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/users/google-login`;
-  }
-
-
-
-
+  // Normal Login
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -31,10 +23,10 @@ function loginWithGoogle() {
         }
       );
 
-      console.log("Login successful:", response.data);
       toast.success("Login successful!");
 
       const role = response.data.role || "user";
+
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("role", role);
 
@@ -45,39 +37,43 @@ function loginWithGoogle() {
       }
     } catch (error) {
       console.log("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
-    }
-  }
-
-  async function handleGoogleLogin(response) {
-    try {
-      const result = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/google-login`,
-        {
-          credential: response.credential,
-        }
+      toast.error(
+        error.response?.data?.message ||
+          "Login failed. Please check your credentials."
       );
-
-      console.log("Google login successful:", result.data);
-
-      toast.success("Google login successful!");
-
-      const role = result.data.role || "user";
-
-      localStorage.setItem("token", result.data.token);
-      localStorage.setItem("role", role);
-
-      if (role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/products");
-      }
-    } catch (error) {
-      console.log("Google login error:", error);
-      toast.error("Google login failed.");
     }
   }
 
+  // Google Login
+  async function handleGoogleLogin(response) {
+  try {
+    const result = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/users/login/google`,
+      {
+        credential: response.credential
+      }
+    );
+
+    localStorage.setItem("token", result.data.token);
+    localStorage.setItem("role", result.data.role);
+
+    toast.success("Login successful!");
+
+    if (result.data.role === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/products");
+    }
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    console.error("Server response:", error.response?.data);
+
+    toast.error(
+      error.response?.data?.message || "Google login failed"
+    );
+  }
+}
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#121212] px-4">
 
@@ -110,7 +106,7 @@ function loginWithGoogle() {
             Login to continue your shopping journey
           </p>
 
-          {/* Form */}
+          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* Email */}
@@ -167,9 +163,7 @@ function loginWithGoogle() {
             <div className="flex justify-center">
               <GoogleLogin
                 onSuccess={handleGoogleLogin}
-                onError={() => {
-                  toast.error("Google login failed.");
-                }}
+                onError={() => toast.error("Google login failed.")}
                 theme="filled_black"
                 size="large"
                 text="signin_with"
@@ -197,4 +191,6 @@ function loginWithGoogle() {
 };
 
 export default Login;
+
+
 
