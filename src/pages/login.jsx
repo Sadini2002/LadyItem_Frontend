@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import logo from "../assents/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -135,7 +136,7 @@ const Login = () => {
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-[#8B1A24] border-2 border-[#FF8A75] flex items-center justify-center shadow-lg">
               <img
-                src="src\assents\logo.png"
+                src={logo}
                 alt="Lady item logo"
                 className="w-20 h-20 object-cover rounded-full"
               />
