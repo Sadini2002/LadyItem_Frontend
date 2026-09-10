@@ -13,13 +13,13 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PaymentPage from "./pages/PaymentPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import Testing from "./pages/Testing";
+
 import { CartProvider } from "./context/CartContext";
 import UserProfilePage from "./pages/UserProfilePage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 function App() {
   return (
-    <GoogleOAuthProvider clientId="405090821825-s5cmu9raur3lm4q9bkb28pbkko3ffeai.apps.googleusercontent.com">   
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>   
      <CartProvider>
       <BrowserRouter>
         <div>
@@ -39,7 +39,7 @@ function App() {
             <Route path="/admin/*" element={<AdminPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/testing" element={<Testing />} />
+           
             <Route path="/profile" element={<UserProfilePage />} />
            
 
