@@ -135,9 +135,9 @@ const Login = () => {
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-[#8B1A24] border-2 border-[#FF8A75] flex items-center justify-center shadow-lg">
               <img
-                src="/logo.png"
-                alt="logo"
-                className="w-12 h-12 object-cover rounded-full"
+                src="src\assents\logo.png"
+                alt="Lady item logo"
+                className="w-20 h-20 object-cover rounded-full"
               />
             </div>
           </div>
@@ -326,6 +326,16 @@ const Login = () => {
                   required
                   className="w-full px-5 py-3 rounded-xl bg-[#1C1C1C] text-white placeholder-gray-500 border border-[#8B1A24] focus:outline-none focus:ring-2 focus:ring-[#FF8A75] focus:border-[#FF8A75] transition-all duration-300"
                 />
+              </div>
+
+              {/* Forgot Password */}
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-xs text-[#FF8A75] hover:text-white hover:underline transition font-medium"
+                >
+                  Forgot Password?
+                </Link>
               </div>
 
               <button

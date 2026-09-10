@@ -123,9 +123,9 @@ const Signup = () => {
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-[#8B1A24] flex items-center justify-center border-2 border-[#FF8A75] shadow-lg">
             <img
-              src="/logo.png"
+              src="src\assents\logo.png"
               alt="Logo"
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-20 h-20 object-cover rounded-full"
             />
           </div>
         </div>
