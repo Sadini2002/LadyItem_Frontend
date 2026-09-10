@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import logo from "../assents/logo.png";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -123,9 +124,9 @@ const Signup = () => {
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-[#8B1A24] flex items-center justify-center border-2 border-[#FF8A75] shadow-lg">
             <img
-              src="/logo.png"
+              src={logo}
               alt="Logo"
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-20 h-20 object-cover rounded-full"
             />
           </div>
         </div>

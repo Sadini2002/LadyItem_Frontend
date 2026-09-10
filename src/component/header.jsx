@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import logo from "../assents/logo.png";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,12 +81,24 @@ const Header = () => {
       <nav className="max-w-7xl mx-auto flex items-center justify-between rounded-full border border-white/30 bg-white/80 backdrop-blur-xl shadow-lg px-6 py-3">
 
         {/* Logo */}
-        <Link
-          to="/"
-          className="text-3xl font-bold text-[#8B1A24]"
-        >
-          LadyItem
-        </Link>
+       <Link
+  to="/"
+  className="group flex items-center gap-3 text-3xl font-bold text-[#8B1A24] transition-all duration-300 active:scale-95"
+>
+  {/* Circular Logo Container */}
+  <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-[#8B1A24]/5 border border-[#8B1A24]/20 p-1 overflow-hidden transition-all duration-300 group-hover:border-[#8B1A24] group-hover:bg-[#8B1A24]/10 group-hover:shadow-[0_0_15px_rgba(139,26,36,0.25)]">
+    <img
+      src={logo}
+      alt="LadyItem Logo"
+      className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
+    />
+  </div>
+
+  {/* Text Label */}
+  <span className="transition-colors duration-300 group-hover:text-[#a3222e]">
+    LadyItem
+  </span>
+</Link>
 
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex items-center gap-8 font-medium text-[#121212]">

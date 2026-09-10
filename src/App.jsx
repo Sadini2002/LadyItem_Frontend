@@ -16,6 +16,7 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 
 import { CartProvider } from "./context/CartContext";
 import UserProfilePage from "./pages/UserProfilePage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/categories" element={<Navigate to="/products" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/admin/*" element={<AdminPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
