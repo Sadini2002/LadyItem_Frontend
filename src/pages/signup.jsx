@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -19,11 +18,25 @@ const Signup = () => {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // OTP Resend Cooldown Timer State
+  const [resendTimer, setResendTimer] = useState(0);
+
   // Password Show / Hide
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  // Cooldown Timer Countdown Logic
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -38,7 +51,7 @@ const Signup = () => {
   // =========================================================
 
   const handleSendSignupOtp = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
 
     // Check password match
     if (formData.password !== formData.confirmPassword) {
@@ -72,6 +85,7 @@ const Signup = () => {
       );
 
       setIsOtpSent(true);
+      setResendTimer(30); // Start 30-second cooldown timer
     } catch (error) {
       console.error("Signup OTP error:", error);
 
@@ -84,10 +98,9 @@ const Signup = () => {
     }
   };
 
-  // =========================================================
-  // 2. VERIFY OTP & CREATE ACCOUNT
-  // =========================================================
-
+  
+  //  VERIFY OTP & CREATE ACCOUNT
+  
   const handleVerifySignupOtp = async (e) => {
     e.preventDefault();
 
@@ -140,23 +153,16 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#121212] relative overflow-hidden px-4 py-10">
 
-      {/* =====================================================
-          BACKGROUND GLOW
-      ====================================================== */}
+     
 
       <div className="absolute top-[-120px] left-[-120px] w-[350px] h-[350px] bg-[#8B1A24]/30 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="absolute bottom-[-120px] right-[-120px] w-[350px] h-[350px] bg-[#FF8A75]/20 rounded-full blur-3xl pointer-events-none"></div>
 
-      {/* =====================================================
-          SIGNUP CARD
-      ====================================================== */}
 
       <div className="relative z-10 w-full max-w-lg bg-white/5 backdrop-blur-xl border border-[#FF8A75]/20 rounded-3xl shadow-2xl p-8">
 
-        {/* =================================================
-            LOGO
-        ================================================== */}
+        
 
         <div className="flex justify-center mb-6">
 
@@ -172,9 +178,7 @@ const Signup = () => {
 
         </div>
 
-        {/* =================================================
-            HEADING
-        ================================================== */}
+        
 
         <h2 className="text-3xl font-bold text-center text-[#FF8A75]">
 
@@ -192,10 +196,7 @@ const Signup = () => {
 
         </p>
 
-        {/* =====================================================
-            STEP 2 - OTP VERIFICATION
-        ====================================================== */}
-
+        
         {isOtpSent ? (
 
           <form
@@ -254,10 +255,12 @@ const Signup = () => {
               <button
                 type="button"
                 onClick={handleSendSignupOtp}
-                disabled={loading}
-                className="text-[#FF8A75] hover:underline"
+                disabled={loading || resendTimer > 0}
+                className="text-[#FF8A75] hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed transition"
               >
-                Resend OTP Code
+                {resendTimer > 0
+                  ? `Resend OTP Code (${resendTimer}s)`
+                  : "Resend OTP Code"}
               </button>
 
               <button
@@ -274,18 +277,12 @@ const Signup = () => {
 
         ) : (
 
-          /* =====================================================
-             STEP 1 - ACCOUNT DETAILS
-          ====================================================== */
 
           <form
             onSubmit={handleSendSignupOtp}
             className="space-y-5"
           >
 
-            {/* =================================================
-                FIRST NAME & LAST NAME
-            ================================================== */}
 
             <div className="grid grid-cols-2 gap-4">
 
@@ -400,10 +397,6 @@ const Signup = () => {
 
             </div>
 
-            {/* =================================================
-                CONFIRM PASSWORD
-            ================================================== */}
-
             <div>
 
               <label className="block text-gray-300 mb-2 text-xs font-medium">
@@ -449,9 +442,7 @@ const Signup = () => {
 
             </div>
 
-            {/* =================================================
-                ROLE
-            ================================================== */}
+
 
             <div>
 
@@ -485,9 +476,7 @@ const Signup = () => {
 
             </div>
 
-            {/* =================================================
-                SEND OTP BUTTON
-            ================================================== */}
+           
 
             <button
               type="submit"
@@ -510,9 +499,7 @@ const Signup = () => {
           </form>
         )}
 
-        {/* =====================================================
-            LOGIN LINK
-        ====================================================== */}
+       
 
         <p className="text-gray-300 text-center mt-6 text-sm">
 
@@ -533,4 +520,3 @@ const Signup = () => {
 };
 
 export default Signup;
-
